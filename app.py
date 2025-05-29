@@ -30,6 +30,36 @@ def get_tourist_spots_csv():
     return send_file("tourist-spots-3.csv", mimetype='text/csv')
 
 
+@app.route("/get_duration_api", methods=["POST"])
+def get_duration_api():
+    data = request.json
+    from_id = data.get("from_id")
+    to_id = data.get("to_id")
+
+    origin = id_to_coords.get(from_id)
+    destination = id_to_coords.get(to_id)
+
+    if not origin or not destination:
+        return jsonify({"error": "座標が見つかりません"}), 400
+
+    url = f"https://maps.googleapis.com/maps/api/directions/json?origin={origin}&destination={destination}&mode=driving&key={API_KEY}"
+    try:
+        response = requests.get(url)
+        data = response.json()
+        if data["status"] == "OK":
+            duration_sec = data["routes"][0]["legs"][0]["duration"]["value"]
+            return jsonify({
+                "from_id": from_id,
+                "to_id": to_id,
+                "minutes": round(duration_sec / 60)
+            })
+        else:
+            return jsonify({"error": f"API Error: {data['status']}"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+
 # ✅ .env 読み込み
 load_dotenv()
 
