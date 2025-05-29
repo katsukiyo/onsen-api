@@ -14,6 +14,9 @@ import os
 from dotenv import load_dotenv
 from flask import send_file
 
+app = Flask(__name__)
+CORS(app)
+
 @app.route('/spot_master_csv', methods=['GET'])
 def get_spot_master_csv():
     return send_file("spot-id-master.csv", mimetype='text/csv')
@@ -24,9 +27,6 @@ def get_distance_matrix_csv():
 
 # ✅ .env 読み込み
 load_dotenv()
-
-app = Flask(__name__)
-CORS(app)
 
 # ✅ APIキーは環境変数から読み込む
 API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
