@@ -12,6 +12,15 @@ from flask_cors import CORS
 import pandas as pd
 import os
 from dotenv import load_dotenv
+from flask import send_file
+
+@app.route('/spot_master_csv', methods=['GET'])
+def get_spot_master_csv():
+    return send_file("spot-id-master.csv", mimetype='text/csv')
+
+@app.route('/distance_matrix_csv', methods=['GET'])
+def get_distance_matrix_csv():
+    return send_file("distance_matrix.csv", mimetype='text/csv')
 
 # ✅ .env 読み込み
 load_dotenv()
