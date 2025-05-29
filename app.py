@@ -14,7 +14,7 @@ import os
 from dotenv import load_dotenv
 
 # ✅ .env 読み込み
-load_dotenv(dotenv_path="hoge2.env")
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
