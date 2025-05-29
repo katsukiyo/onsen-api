@@ -78,15 +78,3 @@ def get_duration():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-# ==== requirements.txt ====
-Flask==2.2.5
-flask-cors
-pandas
-python-dotenv
-requests
-
-
-# ==== .env（Render側の設定画面で入力） ====
-GOOGLE_MAPS_API_KEY=あなたのAPIキー
