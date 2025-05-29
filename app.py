@@ -25,6 +25,11 @@ def get_spot_master_csv():
 def get_distance_matrix_csv():
     return send_file("distance_matrix.csv", mimetype='text/csv')
 
+@app.route('/tourist_spots_csv', methods=['GET'])
+def get_tourist_spots_csv():
+    return send_file("tourist-spots-3.csv", mimetype='text/csv')
+
+
 # ✅ .env 読み込み
 load_dotenv()
 
