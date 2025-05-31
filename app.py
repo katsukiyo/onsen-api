@@ -64,13 +64,31 @@ def realtime_distance():
     from_id = data.get("from_id")
     to_id = data.get("to_id")
 
-    # 本来は距離計算する処理を入れるが、今はダミーデータを返す
-    return jsonify({
-        "from_id": from_id,
-        "to_id": to_id,
-        "driving_minutes": 15,
-        "distance_km": 9.2
-    })
+    origin = id_to_coords.get(from_id)
+    destination = id_to_coords.get(to_id)
+
+    if not origin or not destination:
+        return jsonify({"error": "座標が見つかりません"}), 400
+
+    import requests
+    url = f"https://maps.googleapis.com/maps/api/directions/json?origin={origin}&destination={destination}&mode=driving&key={API_KEY}"
+    try:
+        response = requests.get(url)
+        result = response.json()
+        if result["status"] == "OK":
+            duration_sec = result["routes"][0]["legs"][0]["duration"]["value"]
+            distance_m = result["routes"][0]["legs"][0]["distance"]["value"]
+            return jsonify({
+                "from_id": from_id,
+                "to_id": to_id,
+                "driving_minutes": round(duration_sec / 60),
+                "distance_km": round(distance_m / 1000, 1)
+            })
+        else:
+            return jsonify({"error": result.get("status", "unknown error")}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 
 
