@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 from flask import send_file
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route('/spot_master_csv', methods=['GET'])
 def get_spot_master_csv():
@@ -57,6 +57,32 @@ def get_duration_api():
             return jsonify({"error": f"API Error: {data['status']}"}), 400
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route('/realtime_distance', methods=['POST', 'OPTIONS'])
+def realtime_distance():
+    data = request.get_json()
+    from_id = data.get("from_id")
+    to_id = data.get("to_id")
+
+    return jsonify({
+        "from_id": from_id,
+        "to_id": to_id,
+        "driving_minutes": 15,
+        "distance_km": 9.2
+    })
+
+    # 本処理
+    data = request.get_json()
+    from_id = data.get("from_id")
+    to_id = data.get("to_id")
+
+    # ダミー返却（本来はここでGoogle Mapsなど使って処理）
+    return jsonify({
+        "from_id": from_id,
+        "to_id": to_id,
+        "driving_minutes": 15,
+        "distance_km": 9.2
+    })
 
 
 
