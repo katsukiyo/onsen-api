@@ -11,6 +11,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
 import os
+import requests
 from dotenv import load_dotenv
 from flask import send_file
 
@@ -70,14 +71,18 @@ def realtime_distance():
     if not origin or not destination:
         return jsonify({"error": "座標が見つかりません"}), 400
 
-    import requests
-    url = f"https://maps.googleapis.com/maps/api/directions/json?origin={origin}&destination={destination}&mode=driving&key={API_KEY}"
+    url = (
+        f"https://maps.googleapis.com/maps/api/directions/json"
+        f"?origin={origin}&destination={destination}"
+        f"&mode=driving&key={API_KEY}"
+    )
     try:
         response = requests.get(url)
         result = response.json()
-        if result["status"] == "OK":
-            duration_sec = result["routes"][0]["legs"][0]["duration"]["value"]
-            distance_m = result["routes"][0]["legs"][0]["distance"]["value"]
+        if result.get("status") == "OK":
+            leg = result["routes"][0]["legs"][0]
+            duration_sec = leg["duration"]["value"]
+            distance_m = leg["distance"]["value"]
             return jsonify({
                 "from_id": from_id,
                 "to_id": to_id,
@@ -88,6 +93,9 @@ def realtime_distance():
             return jsonify({"error": result.get("status", "unknown error")}), 400
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 
 
