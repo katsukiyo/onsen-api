@@ -83,11 +83,13 @@ def realtime_distance():
             leg = result["routes"][0]["legs"][0]
             duration_sec = leg["duration"]["value"]
             distance_m = leg["distance"]["value"]
+            raw_minutes     = duration_sec / 60.0
+            rounded_minutes = math.ceil(raw_minutes / 5.0) * 5
             return jsonify({
-                "from_id": from_id,
-                "to_id": to_id,
-                "driving_minutes": round(duration_sec / 60),
-                "distance_km": round(distance_m / 1000, 1)
+                "from_id":         from_id,
+                "to_id":           to_id,
+                "driving_minutes": int(rounded_minutes),
+                "distance_km":      round(distance_m / 1000, 1)
             })
         else:
             return jsonify({"error": result.get("status", "unknown error")}), 400
